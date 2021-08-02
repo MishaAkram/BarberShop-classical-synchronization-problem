@@ -94,7 +94,7 @@ class Customer:
 if __name__ == '__main__':
     customers_list = []
     barber = Barber()
-    barberShop = BarberShop(barber,  1)  # 1 Seat
+    barberShop = BarberShop(barber,  2)  # 1 Seat
     barberShop.startBarberThread()          # 1 customers are entering
     customers_list.append(Customer('Misha Akram'))
     customers_list.append(Customer('Iqra Irfan'))
