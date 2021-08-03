@@ -99,6 +99,7 @@ if __name__ == '__main__':
     customers_list.append(Customer('Misha Akram'))
     customers_list.append(Customer('Iqra Irfan'))
     customers_list.append(Customer('Firdous Riaz'))
+    customers_list.append(Customer('Soniya Shafi'))
     while len(customers_list) > 0:
         c = customers_list.pop()
         # running customer threads here
