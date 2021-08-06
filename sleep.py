@@ -113,7 +113,7 @@ if __name__ == "__main__":
                 total_customers -= 1
                 b.release()
 
-            elif (total_customers == 0 and finish._value==0):
+            elif (total_customers <= 0 and finish._value==0):
                 b.release()
                 time.sleep(15)
                 print("Aaah, all done, going to sleep")
