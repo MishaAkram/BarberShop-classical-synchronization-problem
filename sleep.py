@@ -68,7 +68,7 @@ def customer():
         balk(counter)
 
 def balk(counter):
-    print("The waiting number is full, there are no seats, the customer {}leaves".format(counter))
+    print("The waiting number is full, there are no seats, the customer {} leaves".format(counter))
     mutex.release()
 
 
@@ -91,12 +91,13 @@ def barber():
 
 def cut_hair():
     print("The customer is getting a haircut! ")
-    time.sleep(4)
+    time.sleep(6)
     print("The haircut is over! ")
 
 
 if __name__ == "__main__":
-    waiting_chair = int(input("Please enter the number of chairs waiting for customers in the barber shop:"))
+    total_chairs = int(input("Please enter the number of chairs in the barber shop:"))
+    waiting_chair = total_chairs-1
     total_customers = int(input("Please enter the number of customersthat will come in the barber shop:"))
     t1 = threading.Thread(target=barber)
     t1.start()
@@ -106,7 +107,7 @@ if __name__ == "__main__":
         try:
             b.acquire()
             if ( total_customers > 0):
-                time.sleep(random.randint(1,4))
+                time.sleep(random.randint(1,2))
                 t2 = threading.Thread(target=customer)
                 t2.start()
                 t2.join(1)
