@@ -23,21 +23,23 @@ counter = 0
 wchair_list = []
 #
 in_cut = 0
-
+served_customer=0
 
 def customer():
     # Customer Process
-    global wait_customer, waiting_chair, mutex, wchair, finish, barber_chair, ready, counter, in_cut
+    global wait_customer, waiting_chair, mutex, wchair, finish, barber_chair, ready, counter, in_cut, served_customer
     time.sleep(4)
     # Enter the critical area, modify the number of people waiting
     mutex.acquire()
     if wait_customer <= waiting_chair:
         wait_customer += 1
+        served_customer+=1
         counter += 1
         print("Customer {} is coming".format(counter))
         wchair_list.append("customer"+str(counter))
         print("The current number of customers is:", wait_customer)
-        print("The waiting queue is:", wchair_list ,end=" ")
+        if (waiting_chair>0):
+            print("The waiting queue is:", wchair_list)
         mutex.release()
         # Wait for the chair resource to be available
         wchair.acquire()
@@ -50,7 +52,8 @@ def customer():
             pass
         wchair.release()
         print("{} sat in the barber chair".format(in_cut))
-        print("The remaining waiting queue is:", wchair_list)
+        if (waiting_chair>0):
+            print("The remaining waiting queue is:", wchair_list)
         # Send a signal to the barber
         ready.release()
         # Waiting for haircut
@@ -68,7 +71,13 @@ def customer():
         balk(counter)
 
 def balk(counter):
-    print("The waiting number is full, there are no seats, the customer {} leaves".format(counter))
+    global waiting_chair
+    if (waiting_chair>0):
+        print("The waiting number is full, there are no seats, the customer {} leaves".format(counter))
+    elif (waiting_chair==0):
+        print("There are no waiting seats, the customer {} leaves".format(counter))
+    else:
+        print("There is no barber chair, the customer {} leaves".format(counter))
     mutex.release()
 
 
@@ -83,7 +92,6 @@ def barber():
             time.sleep(1)
         # Waiting for the customer to make a request
         ready.acquire()
-        print("ready",ready._value)
         cut_hair()
         # Haircut finished
         finish.release()
@@ -98,7 +106,7 @@ def cut_hair():
 if __name__ == "__main__":
     total_chairs = int(input("Please enter the number of chairs in the barber shop:"))
     waiting_chair = total_chairs-1
-    total_customers = int(input("Please enter the number of customersthat will come in the barber shop:"))
+    total_customers = int(input("Please enter the number of customers that will come in the barber shop:"))
     t1 = threading.Thread(target=barber)
     t1.start()
     t1.join(1)
@@ -117,7 +125,10 @@ if __name__ == "__main__":
             elif (total_customers <= 0 and finish._value==0):
                 b.release()
                 time.sleep(15)
-                print("Aaah, all done, going to sleep")
+                if (served_customer>0):
+                     print("Aaah, all done, served {} customers, going to sleep".format(served_customer))
+                else:
+                    print("no customers for today, barber is still asleep")
                 break
         except:
             print("error! ")
